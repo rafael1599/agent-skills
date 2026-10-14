@@ -1,0 +1,12 @@
+{
+  "name": "rafa-skills",
+  "owner": { "name": "Rafael Lopez" },
+  "description": "Skills públicas de Rafael Lopez para agentes de código.",
+  "plugins": [
+    {
+      "name": "rafa",
+      "source": "./",
+      "description": "Blindaje legal, cdp-ui-check, image-cors-cache-bust, tareas-largas, perf-testing, local-stack-doctor."
+    }
+  ]
+}

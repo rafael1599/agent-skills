@@ -1,0 +1,26 @@
+{
+  "_comment": "Place at the project root as `.local-stack.json`. Read by scripts/dev-doctor.mjs.",
+
+  "composeProjectName": "myproject",
+
+  "ports": {
+    "3000": { "owner": "api (PM2 / tsx watch)", "kind": "host-process" },
+    "3001": { "owner": "admin (PM2 / Vite)", "kind": "host-process" },
+    "5432": { "owner": "postgres (Docker myproject-postgres-1)", "kind": "docker" },
+    "6379": { "owner": "redis (Docker myproject-redis-1)", "kind": "docker" }
+  },
+
+  "expectedContainers": ["myproject-postgres-1", "myproject-redis-1"],
+
+  "forbiddenContainers": ["myproject-api-1"],
+
+  "expectedPm2": ["myproject-api", "myproject-admin"],
+
+  "legacyPm2": ["myproject-dev"],
+
+  "imageDriftCheck": true,
+
+  "staleImageDays": 14,
+
+  "staleImagePatterns": ["myproject", "agent-pr"]
+}

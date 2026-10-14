@@ -1,0 +1,33 @@
+{
+  "_comment": "Copy this into the target project as tests/perf/perf.config.json and fill in real values. Never commit real auth tokens here — use env var interpolation in the agent's shell instead if HEADERS needs a live token.",
+  "baseUrl": "http://localhost:3000",
+  "defaultWorkload": "balanced",
+  "endpoints": [
+    { "method": "GET", "path": "/health", "weight": 1 },
+    { "method": "GET", "path": "/api/v1/resource/:id", "weight": 6 },
+    { "method": "POST", "path": "/api/v1/resource", "weight": 2, "body": { "example": "field" } },
+    { "method": "PATCH", "path": "/api/v1/resource/:id", "weight": 1, "body": { "example": "updated" } }
+  ],
+  "headers": {
+    "_comment": "e.g. Authorization: Bearer <token> for an authenticated load test. Leave empty for public endpoints.",
+    "Authorization": ""
+  },
+  "hotspotIds": ["1", "2", "3"],
+  "cacheAnalysis": {
+    "_comment": "Fill this in PER endpoint before recommending any caching. See SKILL.md 'Cache analysis gate'.",
+    "/api/v1/resource/:id": {
+      "public": false,
+      "dependsOnAuth": true,
+      "personalized": false,
+      "maxStaleness": "N/A — not yet analyzed",
+      "shareableFraction": "N/A — not yet analyzed",
+      "invalidation": "N/A — not yet analyzed"
+    }
+  },
+  "slo": {
+    "_comment": "If the project has no real SLO yet, DELETE this whole 'slo' block — find-capacity.mjs will fall back to a default and mark it ASSUMED explicitly, per SKILL.md step 2.",
+    "p95_ms": 300,
+    "p99_ms": 600,
+    "error_rate": 0.01
+  }
+}

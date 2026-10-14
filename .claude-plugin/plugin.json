@@ -1,0 +1,7 @@
+{
+  "name": "rafa",
+  "version": "1.0.0",
+  "description": "Skills públicas de Rafael Lopez: blindaje legal, verificación de UIs con Chrome headless, imágenes CORS en canvas/PDF, tareas largas, pruebas de rendimiento y auditoría del stack local.",
+  "author": { "name": "Rafael Lopez" },
+  "license": "MIT"
+}

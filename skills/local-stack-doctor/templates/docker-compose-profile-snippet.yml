@@ -1,0 +1,19 @@
+# Profile-gating template for any containerized service whose dev runtime
+# ALSO runs on the host. Drop into your docker-compose.yml under `services:`.
+#
+# Default `docker compose up -d` will SKIP this service. To bring it up:
+#   docker compose --profile containerized-api up -d
+#
+# Why: when both host PM2 and the container bind the same port, the OS
+# routes requests arbitrarily — bugs become intermittent and the logs
+# alone cannot tell you which listener served any specific request.
+
+services:
+  my-api:
+    profiles: ["containerized-api"]
+    build:
+      context: .
+      dockerfile: apps/my-api/Dockerfile
+    ports:
+      - "3000:3000"
+    # ... rest of service config

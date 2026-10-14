@@ -1,0 +1,84 @@
+# Local Dev Stack
+
+The canonical reference for what runs where during {{PROJECT_NAME}} local development. Update this doc and `scripts/dev-doctor.mjs` (config in `.local-stack.json`) together when the stack changes.
+
+## Port allocation
+
+<!-- Update this table to match `.local-stack.json` ports -->
+
+| Port | Owner | Where it runs | Notes |
+|------|-------|---------------|-------|
+| 3000 | `api` | host (PM2 / `tsx watch`) | NEVER let a Docker container bind here too |
+| 5432 | `postgres` | Docker container | Tracked in `docker-compose.yml` |
+
+Any duplicate listener on these ports is a bug. `pnpm doctor` enforces this.
+
+## What `docker compose up -d` brings up
+
+By default: **only data services (postgres, redis, etc.)**. Any service whose dev runtime ALSO runs on the host (the API server, admin UI, workers) MUST be gated behind a Compose profile so it does NOT auto-start.
+
+To bring up the containerized version of an app for full-stack tests:
+
+```
+docker compose --profile <profile-name> up -d
+```
+
+Always tear it down before going back to dev:
+
+```
+docker compose --profile <profile-name> stop <service>
+```
+
+## Why the profile gate exists
+
+When a containerized version of an app and the host dev runtime listen on the same port simultaneously, the OS routes requests arbitrarily between them. The host process serves the latest source; the container serves whatever was baked into the image last build. Symptoms:
+
+- Bug appears intermittently, indistinguishable in logs.
+- Survives `pm2 restart` and orphan-process kills.
+- Often surfaces as schema drift errors (`column "X" does not exist`) when the image was built before a recent rename.
+
+The profile gate prevents this by default-disabling the containerized variant during dev.
+
+## Process boot sequence
+
+```
+docker compose up -d                # data services only
+pnpm db:migrate                     # apply migrations against local DB
+pm2 start <ecosystem.cjs>           # host runtime (api + admin in separate processes)
+```
+
+## Diagnostic command
+
+```
+pnpm doctor
+```
+
+Surfaces:
+
+- Port collisions on the canonical ports above
+- Any forbidden container running outside its profile gate
+- Local Docker images >14d old (likely stale builds backing future surprises)
+- PM2 processes — confirms expected online, flags legacy combined wrappers
+- docker-compose drift: declared image vs running image
+
+Exit 1 on any RED check. Run before `pnpm dev` if anything feels off.
+
+## Adding a new containerized service
+
+1. Define it in `docker-compose.yml` with a clear comment about whether it is on by default or behind a profile.
+2. If it binds a host port, add the port to `.local-stack.json` (key `ports`) and to this doc's table.
+3. If it duplicates a service that runs on the host, gate it behind a profile by default.
+4. If it accumulates locally-built images, add a pattern to `staleImagePatterns` in `.local-stack.json`.
+5. Run `pnpm doctor` before pushing the change to confirm no port collision.
+
+## Cleanup playbook
+
+When `pnpm doctor` flags stale state:
+
+| Symptom | Fix |
+|---------|-----|
+| Stale image >14d | `docker rmi <image>` (rebuild on next `--profile <name> up`) |
+| Container running outside profile | `docker compose stop <svc> && docker compose rm -f <svc>` |
+| Multiple listeners on a port | `pnpm doctor` shows pids; `taskkill /F /PID <pid>` (Windows) or `kill -9 <pid>` (mac/linux). |
+| Legacy combined PM2 wrapper | `pm2 delete <legacy-name>` and migrate to per-process ecosystem |
+| docker-compose drift | reconcile: update yaml OR `docker compose pull && up -d` |
