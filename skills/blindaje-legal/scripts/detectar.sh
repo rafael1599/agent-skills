@@ -80,6 +80,9 @@ check 9b "Borrado de cuenta (apps en tiendas)" \
 check 11 "Perú (Ley 29733, Libro de Reclamaciones, IGV)" \
   "https?://[a-z0-9.-]+\\.pe\\b|\\bIGV\\b|[ >\"'(]S/ ?[0-9]+[.,]|wa\\.me/51|Lima, Per|libro de reclamaciones"
 
+check 12 "Monitoreo de empleados (foto/GPS en ponche)" \
+  'clock_?(in|out)|ponch[ae]|time_?entr|timesheet|geofence|geocerca|watchPosition'
+
 check 10 "Reseñas y dark patterns" \
   'testimonial|aggregateRating|randomuser\.me|pravatar|rating: *5\b|countdown|(checked|defaultChecked).{0,80}(marketing|newsletter|consent|terms)'
 
