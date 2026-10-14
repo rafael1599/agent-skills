@@ -65,8 +65,15 @@ Una pregunta en el chat, con default, y sólo si cambia qué chequeos aplican:
 
 Proyecto interno (login cerrado, sólo empleados, sin registro público): COPPA, CAN-SPAM,
 suscripciones, DMCA, CCPA, reseñas, términos y borrado de cuenta no aplican. Siguen
-aplicando fuentes/CDNs, replay, cookies si hay analítica, accesibilidad, y —con empleados
-en la UE— un aviso de privacidad para empleados (9a). Decirlo en una línea y seguir.
+aplicando:
+- replay, y cookies si hay analítica;
+- accesibilidad;
+- con empleados en la UE, fuentes/CDNs y un aviso de privacidad para empleados (9a);
+- en EE. UU., si la app captura foto, GPS o uso de internet del personal, el **monitoreo de
+  empleados** (12).
+
+Decirlo en una línea y seguir. Un registro que sólo se abre con invitación no es un registro
+público.
 
 ### 3. Aplicar cada chequeo que aplica
 
@@ -75,7 +82,7 @@ Leer **sólo** la referencia del chequeo activo:
 | # | Chequeo | Se activa si hay | Referencia |
 |---|---|---|---|
 | 1 | Edad en el registro (COPPA) | campo de edad/nacimiento, contenido o público infantil (un signup público sólo da contexto) | `references/coppa.md` |
-| 2 | Fuentes y CDNs de terceros | `fonts.googleapis`, CDNs, YouTube, Maps, Gravatar, reCAPTCHA | `references/terceros-cdn.md` |
+| 2 | Fuentes y CDNs de terceros (**sólo con usuarios en la UE/EEE**: es GDPR) | `fonts.googleapis`, CDNs, YouTube, Maps, Gravatar, reCAPTCHA | `references/terceros-cdn.md` |
 | 3 | Grabación de sesiones | PostHog, Sentry Replay, LogRocket, Clarity, Hotjar, FullStory, OpenReplay | `references/session-replay.md` |
 | 4 | Emails de marketing | SDK de email + newsletter, campañas o `marketing_opt_in` | `references/email-marketing.md` |
 | 5 | Suscripciones | Stripe/Paddle/LemonSqueezy/RevenueCat con cobro recurrente | `references/suscripciones.md` |
@@ -85,6 +92,7 @@ Leer **sólo** la referencia del chequeo activo:
 | 9 | Privacidad, términos (9a), borrado de cuenta (9b) | cualquier recogida de datos; 9b con `ios/`, `android/`, Expo, Capacitor | `references/paginas-legales.md` |
 | 10 | Reseñas y dark patterns | testimonios, ratings, urgencia, casillas premarcadas | `references/resenas-dark-patterns.md` |
 | 11 | Perú: Ley 29733, Libro de Reclamaciones, precios con IGV | `.pe`, `S/`, `IGV`, dirección en Perú | `references/peru.md` |
+| 12 | Monitoreo electrónico de empleados (EE. UU.) | ponche o control de horas con foto/GPS en una app interna (la cámara sola no cuenta) | `references/monitoreo-empleados.md` |
 
 Arreglar en el código siguiendo las convenciones del repo (su `CLAUDE.md`, sus
 componentes, su idioma de UI). Texto visible al usuario en el idioma de la app.
